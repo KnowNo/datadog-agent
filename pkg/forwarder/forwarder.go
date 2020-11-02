@@ -339,6 +339,7 @@ func (f *DefaultForwarder) createPriorityHTTPTransactions(endpoint endpoint, pay
 
 	for _, payload := range payloads {
 		for domain, apiKeys := range f.keysPerDomains {
+			log.Errorf("domain: %v, apikeys: %v", domain, apiKeys)
 			for _, apiKey := range apiKeys {
 				if apiKeyInQueryString {
 					endpoint.route = fmt.Sprintf("%s?api_key=%s", endpoint.route, apiKey)
@@ -371,6 +372,7 @@ func (f *DefaultForwarder) createPriorityHTTPTransactions(endpoint endpoint, pay
 			}
 		}
 	}
+	log.Errorf("number of transactions (should be 3): %v", len(transactions))
 	return transactions
 }
 
@@ -494,7 +496,7 @@ func (f *DefaultForwarder) SubmitOrchestratorChecks(payload Payloads, extra http
 
 func (f *DefaultForwarder) submitProcessLikePayload(ep endpoint, payload Payloads, extra http.Header, retryable bool) (chan Response, error) {
 	transactions := f.createHTTPTransactions(ep, payload, false, extra)
-
+	log.Errorf("transactions in submitProcessLikePayload: %v", len(transactions))
 	results := make(chan Response, len(transactions))
 	internalResults := make(chan Response, len(transactions))
 	expectedResponses := len(transactions)
